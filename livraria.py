@@ -32,10 +32,10 @@ def exibir_menu_relatorios():
 
 def cadastrar_item(itens):
     print("\n--- Cadastro de Novo Item ---")
-    nome = input("Digite o nome do item (ex: Caneta Azul): ").replace(",", ".").replace(" ", "")
+    nome = input("Digite o nome do item (ex: Caneta Azul): ")
 
     try:
-        preco = float(input("Digite o preço: "))
+        preco = float(input("Digite o preço: ").replace(",", ".").replace(" ", ""))
         quantidade = int(input("Digite a quantidade em estoque: ").replace(" ", ""))
     except ValueError:
         print("\nErro: Preço e quantidade precisam ser números. Operação cancelada.")
