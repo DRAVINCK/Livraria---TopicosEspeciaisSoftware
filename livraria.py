@@ -42,7 +42,19 @@ def cadastrar_item(itens):
     print(f"\nItem '{nome}' cadastrado com sucesso!")
 
 # fazer o metodo para listar os itens
+def listar_itens(itens):
 
+    print("\n--- Lista de Itens Cadastrados ---")
+    if not itens:
+        print("Nenhum item cadastrado ainda.")
+        return
+
+    for i, item in enumerate(itens):
+        print(f"Indice: {i}")
+        print(f"  Nome: {item['nome']}")
+        print(f"  Preço: R$ {item['preco']:.2f}")
+        print(f"  Estoque: {item['quantidade']} unidades")
+        print("-" * 20)
 
 #fazer metodo de realizar venda
 
