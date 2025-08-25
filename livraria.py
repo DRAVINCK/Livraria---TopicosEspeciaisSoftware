@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # Constante
 DESCONTO_PADRAO = 0.0117
 
@@ -8,20 +10,26 @@ item = {nome, preco, quantidade}
 
 #Listas
 itens = []
+vendas = []
 
 #metodos
 
-#fazer metodo de exibir o menu
 def exibir_menu():
     print("\n--- Menu da Papelaria ---")
     print("1. Cadastrar novo item")
     print("2. Listar todos os itens")
     print("3. Realizar venda")
-    print("4. Sair")
+    print("4. Relatórios")
+    print("5. Sair")
     return input("Escolha uma opção: ")
 
+def exibir_menu_relatorios():
+    print("\n--- Relatórios ---")
+    print("1. Totais gerais")
+    print("2. Produtos (ranking e baixo estoque)")
+    print("0. Voltar")
+    return input("Escolha uma opção: ")
 
-# fazer o metodo para cadastrar item
 def cadastrar_item(itens):
     print("\n--- Cadastro de Novo Item ---")
     nome = input("Digite o nome do item (ex: Caneta Azul): ").replace(",", ".").replace(" ", "")
@@ -41,9 +49,7 @@ def cadastrar_item(itens):
     itens.append(novo_item)
     print(f"\nItem '{nome}' cadastrado com sucesso!")
 
-# fazer o metodo para listar os itens
 def listar_itens(itens):
-
     print("\n--- Lista de Itens Cadastrados ---")
     if not itens:
         print("Nenhum item cadastrado ainda.")
@@ -56,9 +62,20 @@ def listar_itens(itens):
         print(f"  Estoque: {item['quantidade']} unidades")
         print("-" * 20)
 
-#fazer metodo de realizar venda
-def realizar_venda(itens, desconto):
+def registrar_venda(vendas, item_nome, preco_unitario, quantidade, valor_bruto, valor_desconto, valor_final):
+    venda = {
+        "id": len(vendas) + 1,
+        "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "item_nome": item_nome,
+        "preco_unitario": float(preco_unitario),
+        "quantidade": int(quantidade),
+        "valor_bruto": float(valor_bruto),
+        "desconto_aplicado": float(valor_desconto),
+        "valor_final": float(valor_final)
+    }
+    vendas.append(venda)
 
+def realizar_venda(itens, desconto):
     print("\n--- Realizar Venda ---")
     if not itens:
         print("Nenhum item cadastrado para vender.")
@@ -96,9 +113,16 @@ def realizar_venda(itens, desconto):
             confirmacao = input("\nConfirmar a venda? (S/N): ")
 
             if confirmacao.lower() == 's':
-
                 item_selecionado["quantidade"] -= quantidade_venda
-
+                registrar_venda(
+                    vendas=vendas,
+                    item_nome=item_selecionado["nome"],
+                    preco_unitario=item_selecionado["preco"],
+                    quantidade=quantidade_venda,
+                    valor_bruto=valor_bruto,
+                    valor_desconto=valor_desconto,
+                    valor_final=valor_final
+                )
                 print("\n--- Venda Realizada com Sucesso! ---")
                 print(f"Estoque restante de '{item_selecionado['nome']}': {item_selecionado['quantidade']} unidades.")
             else:
@@ -109,9 +133,48 @@ def realizar_venda(itens, desconto):
     except ValueError:
         print("\nErro: Índice e quantidade devem ser números inteiros.")
 
-# define a logica de main para navegar entre os metodos
-def main():
+def relatorio_totais_gerais(vendas):
+    print("\n--- Relatório: Totais Gerais ---")
+    if not vendas:
+        print("Nenhuma venda registrada.")
+        return
 
+    total_bruto = sum(v["valor_bruto"] for v in vendas)
+    total_desconto = sum(v["desconto_aplicado"] for v in vendas)
+    total_liquido = sum(v["valor_final"] for v in vendas)
+    qtde_vendas = len(vendas)
+
+    print(f"Quantidade de vendas: {qtde_vendas}")
+    print(f"Total Bruto: R$ {total_bruto:.2f}")
+    print(f"Total Descontos: R$ {total_desconto:.2f}")
+    print(f"Total Líquido: R$ {total_liquido:.2f}")
+
+def relatorio_produtos(itens, vendas, limite_baixo_estoque=5):
+    print("\n--- Relatório: Produtos ---")
+    ranking = {}
+    for v in vendas:
+        nome = v["item_nome"]
+        ranking.setdefault(nome, {"quantidade": 0, "faturamento": 0.0})
+        ranking[nome]["quantidade"] += v["quantidade"]
+        ranking[nome]["faturamento"] += v["valor_final"]
+
+    if ranking:
+        print("\nTop produtos vendidos:")
+        ordenado = sorted(ranking.items(), key=lambda kv: (kv[1]["quantidade"], kv[1]["faturamento"]), reverse=True)
+        for nome, dados in ordenado:
+            print(f" - {nome}: {dados['quantidade']} un. | Faturamento: R$ {dados['faturamento']:.2f}")
+    else:
+        print("Nenhuma venda registrada para gerar ranking.")
+
+    print("\nProdutos com baixo estoque:")
+    baixo = [item for item in itens if item["quantidade"] < limite_baixo_estoque]
+    if baixo:
+        for item in baixo:
+            print(f" - {item['nome']}: {item['quantidade']} un.")
+    else:
+        print("Nenhum produto com baixo estoque.")
+
+def main():
     print("--- Bem-vindo ao Sistema de Controle da Papelaria ---")
 
     while True:
@@ -124,10 +187,21 @@ def main():
         elif opcao == "3":
             realizar_venda(itens, DESCONTO_PADRAO)
         elif opcao == "4":
+            while True:
+                op_r = exibir_menu_relatorios()
+                if op_r == "1":
+                    relatorio_totais_gerais(vendas)
+                elif op_r == "2":
+                    relatorio_produtos(itens, vendas)
+                elif op_r == "0":
+                    break
+                else:
+                    print("Opção inválida de relatório.")
+        elif opcao == "5":
             print("\nSaindo do sistema... Até logo!")
             break
         else:
-            print("\nOpção inválida. Por favor, escolha um número de 1 a 4.")
-            
+            print("\nOpção inválida. Por favor, escolha um número de 1 a 5.")
+
 if __name__ == "__main__":
     main()
