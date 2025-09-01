@@ -75,9 +75,10 @@ def registrar_venda(vendas, item_nome, preco_unitario, quantidade, valor_bruto, 
     }
     vendas.append(venda)
 
+#8.3 Validação p. 173
 def realizar_venda(itens, desconto):
     print("\n--- Realizar Venda ---")
-    if not itens:
+    if not itens: # aqui validamos se a lista esta vazia
         print("Nenhum item cadastrado para vender.")
         return
 
