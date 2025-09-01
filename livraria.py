@@ -1,6 +1,6 @@
 from datetime import datetime
 
-# Constante
+# 8.1 Variaveis locais e globais
 DESCONTO_PADRAO = 0.0117
 
 #Entidade
