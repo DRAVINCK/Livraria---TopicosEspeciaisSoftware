@@ -158,7 +158,8 @@ def calcular_faturamento(vendas_lista):
         return 0
     return vendas_lista[0]["valor_final"] + calcular_faturamento(vendas_lista[1:])# nesse return utilizamos a função novamente
 
-def relatorio_produtos(itens, vendas, limite_baixo_estoque=5):
+#8.4 Parâmetros opcionais p. 174
+def relatorio_produtos(itens, vendas, limite_baixo_estoque=5):#limite_baixo_estoque é o nosso parametro opcional, podemos mudar
     print("\n--- Relatório: Produtos ---")
     ranking = {}
     for v in vendas:
