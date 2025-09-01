@@ -133,21 +133,29 @@ def realizar_venda(itens, desconto):
     except ValueError:
         print("\nErro: Índice e quantidade devem ser números inteiros.")
 
+
+
 def relatorio_totais_gerais(vendas):
     print("\n--- Relatório: Totais Gerais ---")
     if not vendas:
         print("Nenhuma venda registrada.")
         return
 
+    total_liquido = calcular_faturamento(vendas)
+
     total_bruto = sum(v["valor_bruto"] for v in vendas)
     total_desconto = sum(v["desconto_aplicado"] for v in vendas)
-    total_liquido = sum(v["valor_final"] for v in vendas)
-    qtde_vendas = len(vendas)
 
-    print(f"Quantidade de vendas: {qtde_vendas}")
+    print(f"Quantidade de vendas: {len(vendas)}")
     print(f"Total Bruto: R$ {total_bruto:.2f}")
     print(f"Total Descontos: R$ {total_desconto:.2f}")
     print(f"Total Líquido: R$ {total_liquido:.2f}")
+
+#8.2 Funções recursivas p. 170
+def calcular_faturamento(vendas_lista):
+    if not vendas_lista:
+        return 0
+    return vendas_lista[0]["valor_final"] + calcular_faturamento(vendas_lista[1:])# nesse return utilizamos a função novamente
 
 def relatorio_produtos(itens, vendas, limite_baixo_estoque=5):
     print("\n--- Relatório: Produtos ---")
