@@ -62,6 +62,7 @@ def listar_itens(itens):
         print(f"  Estoque: {item['quantidade']} unidades")
         print("-" * 20)
 
+# 8.5 Nomeando parâmetros p. 176
 def registrar_venda(vendas, item_nome, preco_unitario, quantidade, valor_bruto, valor_desconto, valor_final):
     venda = {
         "id": len(vendas) + 1,
